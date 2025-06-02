@@ -33,7 +33,7 @@ This will install the packages from the requirements.txt for this project.
 # Start OF the code
 load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = secrets.token_hex(32)
+app.config['SECRET_KEY'] = os.getenv("Secret_key")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 gravatar = Gravatar(app,
