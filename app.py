@@ -90,11 +90,8 @@ class Comment(db.Model):
     blog_parent = relationship("BlogPost", back_populates="comments")
 
 
-
-
 with app.app_context():
     db.create_all()
-
 
 def admin_only(function):
     @wraps(function)
