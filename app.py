@@ -95,6 +95,7 @@ class Comment(db.Model):
 with app.app_context():
     db.create_all()
 
+
 def admin_only(function):
     @wraps(function)
     def wrapper_function(*args, **kwargs):
