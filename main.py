@@ -14,6 +14,8 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from functools import wraps
 import secrets
 from flask_gravatar import Gravatar
+from dotenv import load_dotenv
+import os
 
 
 '''
@@ -28,7 +30,8 @@ pip3 install -r requirements.txt
 
 This will install the packages from the requirements.txt for this project.
 '''
-
+# Start OF the code
+load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secrets.token_hex(32)
 ckeditor = CKEditor(app)
@@ -49,7 +52,7 @@ login_manager.init_app(app)
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQL")
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -105,7 +108,7 @@ def admin_only(function):
 def load_user(user_id):
     return db.session.get(RegisteredUser, int(user_id))
 
-# TODO: Use Werkzeug to hash the user's password when creating a new user.
+
 @app.route('/register',methods=["GET", "POST"])
 def register():
     register_form = RegisterForm()
@@ -123,7 +126,7 @@ def register():
     return render_template("register.html",form=register_form, is_logged=current_user)
 
 
-# TODO: Retrieve a user from the database based on their email. 
+
 @app.route('/login', methods=["POST", "GET"])
 def login():
     login_form = LoginForm()
@@ -156,7 +159,7 @@ def get_all_posts():
     return render_template("index.html", all_posts=posts, is_logged=current_user)
 
 
-# TODO: Allow logged-in users to comment on posts
+
 @app.route("/post/<int:post_id>", methods=["POST", "GET"])
 def show_post(post_id):
     comment_form = CommentForm()
@@ -175,7 +178,7 @@ def show_post(post_id):
     return render_template("post.html", post=requested_post, is_logged=current_user, comment_form=comment_form,post_comments=post_comments)
 
 
-# TODO: Use a decorator so only an admin user can create a new post
+
 @app.route("/new-post", methods=["GET", "POST"])
 @admin_only
 def add_new_post():
@@ -195,7 +198,7 @@ def add_new_post():
     return render_template("make-post.html", form=form, is_logged=current_user)
 
 
-# TODO: Use a decorator so only an admin user can edit a post
+
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @admin_only
 def edit_post(post_id):
@@ -239,4 +242,4 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    app.run(debug=True)
